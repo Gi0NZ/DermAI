@@ -49,19 +49,6 @@ print("Struttura del dataset post drop")
 dataset_nodup = dataset.drop_duplicates()
 print(dataset_nodup.shape)
 
-# #Esaminazione delle distribuzioni dei dati
-# for column in dataset.columns:
-#     plt.figure(figsize=(6, 6))
-#     data_min = dataset[column].min()
-#     data_max = dataset[column].max()
-#     step = 1
-#     plt.hist(dataset[column], bins=20, color='skyblue', edgecolor='black', )# Modifica il numero di bins a tuo piacimento
-#     plt.title(f'Distribuzione di {column}')
-#     plt.xlabel('Valore')
-#     plt.ylabel('Frequenza')
-#     plt.grid(True)
-#     plt.show()
-
 
 # Esaminazione del bilanciamento delle classi
 conteggio_classi = dataset[" Class"].value_counts()
@@ -155,20 +142,20 @@ x_train_ros, x_test_ros, y_train_ros, y_test_ros = train_test_split(X_ros, y_ros
 # SEZIONE DECISIONAL TREE
 # sezione con database senza oversampling
 
-dt = dt.fit(x_train, y_train)
-y_pred = dt.predict(x_test)
+dt_nsp = dt.fit(x_train, y_train)
+y_pred = dt_nsp.predict(x_test)
 conf_matrix = confusion_matrix(y_test, y_pred)
 
 # sezione con smote
 
-dt = dt.fit(x_train_smote, y_train_smote)
-y_pred_smote = dt.predict(x_test_smote)
+dt_smote = dt.fit(x_train_smote, y_train_smote)
+y_pred_smote = dt_smote.predict(x_test_smote)
 conf_matrix_smote = confusion_matrix(y_test_smote, y_pred_smote)
 
 # sezione con random oversampling
 
-dt = dt.fit(x_train_ros, y_train_ros)
-y_pred_ros = dt.predict(x_test_ros)
+dt_ros = dt.fit(x_train_ros, y_train_ros)
+y_pred_ros = dt_ros.predict(x_test_ros)
 conf_matrix_ros = confusion_matrix(y_test_ros, y_pred_ros)
 
 # plot matrice di confusione
@@ -194,9 +181,9 @@ plt.savefig("images/dt_ros.png")
 plt.show()
 
 # SEZIONE PREDIZIONI
-y_pred = dt.predict(x_test)
-y_pred_smote = dt.predict(x_test_smote)
-y_pred_ros = dt.predict(x_test_ros)
+y_pred = dt_nsp.predict(x_test)
+y_pred_smote = dt_smote.predict(x_test_smote)
+y_pred_ros = dt_ros.predict(x_test_ros)
 
 y_true = dataset[" Class"]
 
@@ -260,18 +247,21 @@ print("F1 Score: %.4f" % f1_ros)
 print("Accuracy: %.4f " % accuracy_ros)
 
 # SEZIONE NAIVE BAYES
+
+
 # sezione con database senza oversampling
-y_pred = nb.predict(x_test)
+nb_nsp = nb.fit(x_train, y_train)
+y_pred = nb_nsp.predict(x_test)
 conf_matrix = confusion_matrix(y_test, y_pred)
 
 # sezione con smote
-nb = nb.fit(x_train_smote, y_train_smote)
-y_pred_smote = nb.predict(x_test_smote)
+nb_smote = nb.fit(x_train_smote, y_train_smote)
+y_pred_smote = nb_smote.predict(x_test_smote)
 conf_matrix_smote = confusion_matrix(y_test_smote, y_pred_smote)
 
 # sezione con random oversampling
-nb = nb.fit(x_train_ros, y_train_ros)
-y_pred_ros = nb.predict(x_test_ros)
+nb_ros = nb.fit(x_train_ros, y_train_ros)
+y_pred_ros = nb_ros.predict(x_test_ros)
 conf_matrix_ros = confusion_matrix(y_test_ros, y_pred_ros)
 
 # plot matrice di confusione
@@ -297,9 +287,9 @@ plt.savefig("images/nb_ros.png")
 plt.show()
 
 # SEZIONE PREDIZIONI
-y_pred = nb.predict(x_test)
-y_pred_smote = nb.predict(x_test_smote)
-y_pred_ros = nb.predict(x_test_ros)
+y_pred = nb_nsp.predict(x_test)
+y_pred_smote = nb_smote.predict(x_test_smote)
+y_pred_ros = nb_ros.predict(x_test_ros)
 
 # CALCOLO DELLE PRESTAZIONI SENZA OVERSAMPLING
 # Calcolo della precision
@@ -315,8 +305,6 @@ f1 = f1_score(y_test, y_pred, average="macro")
 accuracy = accuracy_score(y_test, y_pred)
 
 # Stampiamo i risultati
-
-print("\nPRESTAZIONI NAIVE BAYES")
 print("Risultati senza oversampling")
 print("Precision: %.4f" % precision)
 print("Recall: %.4f" % recall)
@@ -363,18 +351,18 @@ print("Accuracy: %.4f " % accuracy_ros)
 
 # RANDOM FOREST
 # sezione con database senza oversampling
-rf = rf.fit(x_train, y_train)
-y_pred = rf.predict(x_test)
+rf_nsp = rf.fit(x_train, y_train)
+y_pred = rf_nsp.predict(x_test)
 conf_matrix = confusion_matrix(y_test, y_pred)
 
 # sezione con smote
-rf = rf.fit(x_train_smote, y_train_smote)
-y_pred_smote = rf.predict(x_test_smote)
+rf_smote = rf.fit(x_train_smote, y_train_smote)
+y_pred_smote = rf_smote.predict(x_test_smote)
 conf_matrix_smote = confusion_matrix(y_test_smote, y_pred_smote)
 
 # sezione con random oversampling
-rf = rf.fit(x_train_ros, y_train_ros)
-y_pred_ros = rf.predict(x_test_ros)
+rf_ros = rf.fit(x_train_ros, y_train_ros)
+y_pred_ros = rf_ros.predict(x_test_ros)
 conf_matrix_ros = confusion_matrix(y_test_ros, y_pred_ros)
 
 # plot matrice di confusione
@@ -400,9 +388,9 @@ plt.savefig("images/rf_ros.png")
 plt.show()
 
 # SEZIONE PREDIZIONI
-y_pred = rf.predict(x_test)
-y_pred_smote = rf.predict(x_test_smote)
-y_pred_ros = rf.predict(x_test_ros)
+y_pred = rf_nsp.predict(x_test)
+y_pred_smote = rf_smote.predict(x_test_smote)
+y_pred_ros = rf_ros.predict(x_test_ros)
 
 # CALCOLO DELLE PRESTAZIONI SENZA OVERSAMPLING
 # Calcolo della precision
@@ -418,12 +406,12 @@ f1 = f1_score(y_test, y_pred, average="macro")
 accuracy = accuracy_score(y_test, y_pred)
 
 # Stampiamo i risultati
-print("\nPRESTAZIONI RANDOM FOREST")
 print("Risultati senza oversampling")
 print("Precision: %.4f" % precision)
 print("Recall: %.4f" % recall)
 print("F1 Score: %.4f" % f1)
 print("Accuracy: %.4f" % accuracy)
+
 
 # CALCOLO DELLE PRESTAZIONI CON SMOTE
 precision_smote = precision_score(y_test_smote, y_pred_smote, average="macro")
@@ -464,19 +452,20 @@ print("F1 Score: %.4f" % f1_ros)
 print("Accuracy: %.4f " % accuracy_ros)
 
 # SEZIONE KNN
+
 # sezione con database senza oversampling
-knn = knn.fit(x_train, y_train)
-y_pred = knn.predict(x_test)
+knn_nsp = knn.fit(x_train, y_train)
+y_pred = knn_nsp.predict(x_test)
 conf_matrix = confusion_matrix(y_test, y_pred)
 
 # sezione con smote
-knn = knn.fit(x_train_smote, y_train_smote)
-y_pred_smote = knn.predict(x_test_smote)
+knn_smote = knn.fit(x_train_smote, y_train_smote)
+y_pred_smote = knn_smote.predict(x_test_smote)
 conf_matrix_smote = confusion_matrix(y_test_smote, y_pred_smote)
 
 # sezione con random oversampling
-knn = knn.fit(x_train_ros, y_train_ros)
-y_pred_ros = knn.predict(x_test_ros)
+knn_ros = knn.fit(x_train_ros, y_train_ros)
+y_pred_ros = knn_ros.predict(x_test_ros)
 conf_matrix_ros = confusion_matrix(y_test_ros, y_pred_ros)
 
 # plot matrice di confusione
@@ -502,9 +491,9 @@ plt.savefig("images/knn_ros.png")
 plt.show()
 
 # SEZIONE PREDIZIONI
-y_pred = knn.predict(x_test)
-y_pred_smote = knn.predict(x_test_smote)
-y_pred_ros = knn.predict(x_test_ros)
+y_pred = knn_nsp.predict(x_test)
+y_pred_smote = knn_smote.predict(x_test_smote)
+y_pred_ros = knn_ros.predict(x_test_ros)
 
 # CALCOLO DELLE PRESTAZIONI SENZA OVERSAMPLING
 # Calcolo della precision
@@ -520,7 +509,6 @@ f1 = f1_score(y_test, y_pred, average="macro")
 accuracy = accuracy_score(y_test, y_pred)
 
 # Stampiamo i risultati
-print("\nPRESTAZIONI KNEAREST NEIGHBORS")
 print("Risultati senza oversampling")
 print("Precision: %.4f" % precision)
 print("Recall: %.4f" % recall)
@@ -568,18 +556,18 @@ print("Accuracy: %.4f " % accuracy_ros)
 # SEZIONE SVC
 
 # sezione con database senza oversampling
-svc = svc.fit(x_train, y_train)
-y_pred = svc.predict(x_test)
+svc_nsp = svc.fit(x_train, y_train)
+y_pred = svc_nsp.predict(x_test)
 conf_matrix = confusion_matrix(y_test, y_pred)
 
 # sezione con smote
-svc = svc.fit(x_train_smote, y_train_smote)
-y_pred_smote = svc.predict(x_test_smote)
+svc_smote = svc.fit(x_train_smote, y_train_smote)
+y_pred_smote = svc_smote.predict(x_test_smote)
 conf_matrix_smote = confusion_matrix(y_test_smote, y_pred_smote)
 
 # sezione con random oversampling
-svc = svc.fit(x_train_ros, y_train_ros)
-y_pred_ros = svc.predict(x_test_ros)
+svc_ros = svc.fit(x_train_ros, y_train_ros)
+y_pred_ros = svc_ros.predict(x_test_ros)
 conf_matrix_ros = confusion_matrix(y_test_ros, y_pred_ros)
 
 # plot matrice di confusione
@@ -589,6 +577,7 @@ plt.xlabel('Eticheta Predetta')
 plt.ylabel('Eticheta Reale')
 plt.savefig("images/svc_no_ovsp.png")
 plt.show()
+
 
 sns.heatmap(conf_matrix_smote, annot=True, fmt='d', cmap='viridis', cbar=False)
 plt.title("Matrice di Confusione con SMOTE")
@@ -605,9 +594,9 @@ plt.savefig("images/svc_ros.png")
 plt.show()
 
 # SEZIONE PREDIZIONI
-y_pred = svc.predict(x_test)
-y_pred_smote = svc.predict(x_test_smote)
-y_pred_ros = svc.predict(x_test_ros)
+y_pred = svc_nsp.predict(x_test)
+y_pred_smote = svc_smote.predict(x_test_smote)
+y_pred_ros = svc_ros.predict(x_test_ros)
 
 # CALCOLO DELLE PRESTAZIONI SENZA OVERSAMPLING
 # Calcolo della precision
@@ -623,7 +612,6 @@ f1 = f1_score(y_test, y_pred, average="macro")
 accuracy = accuracy_score(y_test, y_pred)
 
 # Stampiamo i risultati
-print("\nPRESTAZIONI SUPPORT VECTOR MACHINE")
 print("Risultati senza oversampling")
 print("Precision: %.4f" % precision)
 print("Recall: %.4f" % recall)
